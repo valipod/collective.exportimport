@@ -1,19 +1,19 @@
-.. This README is meant for consumption by humans and pypi. Pypi can render rst files so please do not use Sphinx features.
-   If you want to learn more about writing documentation, please check out: http://docs.plone.org/about/documentation_styleguide.html
-   This text does not appear on pypi or github. It is a comment.
+.. This README is meant for consumption by humans and PyPI. PyPI can render reStructuredText files, so please do not use Sphinx features.
+   If you want to learn more about writing documentation, please check out: https://6.docs.plone.org/contributing/documentation/
+   This text does not appear on PyPI or GitHub. It is a comment.
 
 .. image:: https://img.shields.io/pypi/v/collective.exportimport.svg
-    :target: https://pypi.python.org/pypi/collective.exportimport/
+    :target: https://pypi.org/project/collective.exportimport/
     :alt: Latest Version
 
 .. image:: https://img.shields.io/pypi/status/collective.exportimport.svg
-    :target: https://pypi.python.org/pypi/collective.exportimport
+    :target: https://pypi.org/project/collective.exportimport/
     :alt: Egg Status
 
 .. image:: https://img.shields.io/pypi/pyversions/collective.exportimport.svg?style=plastic   :alt: Supported - Python Versions
 
 .. image:: https://img.shields.io/pypi/l/collective.exportimport.svg
-    :target: https://pypi.python.org/pypi/collective.exportimport/
+    :target: https://pypi.org/project/collective.exportimport/
     :alt: License
 
 
@@ -55,6 +55,28 @@ Export supports:
 Import supports:
 
 * Plone 5.2+, Dexterity, Python 2 and 3, plone.app.multilingual
+
+
+Installation
+============
+
+Install collective.exportimport as you would install any other Python package.
+
+You don't need to activate the add-on in the Site Setup Add-ons control panel to be able to use the forms ``@@export_content`` and ``@@import_content`` in your site.
+
+If you need help, see:
+- for Plone 4: https://4.docs.plone.org/adapt-and-extend/install_add_ons.html
+- for Plone 5: https://5.docs.plone.org/manage/installing/installing_addons.html
+- for Plone 6: https://6.docs.plone.org/install/manage-add-ons-packages.html
+
+
+Python 2 compatibility
+----------------------
+
+This package is compatible with Python 3 and Python 2.
+Depending on the Python version different versions of it's dependencies will be installed.
+If you run into problems, file an issue at: https://github.com/collective/collective.exportimport/issues
+
 
 Usage
 =====
@@ -104,7 +126,7 @@ Use-cases
 Migrations
 ----------
 
-When a in-place-migration is not required you can choose this addon to migrate the most important parts of your site to json and then import it into a new Plone instance of your targeted version:
+When a in-place-migration is not required you can choose this add-on to migrate the most important parts of your site to json and then import it into a new Plone instance of your targeted version:
 
 * Export content from a Plone site (it supports Plone 4 and 5, Archetypes and Dexterity, Python 2 and 3).
 * Import the exported content into a new site (Plone 5.2+, Dexterity, Python 3)
@@ -115,15 +137,14 @@ How to migrate additional features like Annotations or Marker Interfaces is disc
 Other
 -----
 
-You can use this addon to
+You can use this add-on to
 
-* Archive your content as json
-* Export data to prepare a migration to another system
+* Archive your content as JSON.
+* Export data to prepare a migration to another system.
 * Combine content from multiple plone-sites into one.
 * Import a plone-site as a subsite into another.
 * Import content from other systems as long as it fits the required format.
-* Update or replace existing data
-* ...
+* Update or replace existing data.
 
 Details
 =======
@@ -250,7 +271,7 @@ In the import-form you can manually select a directory on the server or specify 
 Customize export and import
 ===========================
 
-This addon is designed to be adapted to your requirements and has multiple hooks to make that easy.
+This add-on is designed to be adapted to your requirements and has multiple hooks to make that easy.
 
 To make that easier here are packages you can reuse to override and extend the export and import.
 Use these templates and adapt them to your own projects:
@@ -319,9 +340,9 @@ Export Example
             return item
 
 
-Register it with your own browserlayer to override the default:
+Register it with your own browserlayer to override the default.
 
-.. code-block:: xml
+.. code-block::
 
   <browser:page
       name="export_content"
@@ -383,7 +404,7 @@ Import Example
 
 Register it:
 
-.. code-block:: xml
+.. code-block::
 
   <browser:page
       name="import_content"
@@ -664,7 +685,7 @@ Export/Import Annotations
 -------------------------
 
 Some core-features of Plone (e.g. comments) use annotations to store data.
-The core features are already covered but your custom code or community addons may use annotations as well.
+The core features are already covered but your custom code or community add-ons may use annotations as well.
 Here is how you can migrate them.
 
 **Export**: Only export those Annotations that your really need.
@@ -733,7 +754,7 @@ It is a good idea to inspect a list of all used marker interfaces in a portal be
     ]
     MARKER_INTERFACES_KEY = "exportimport.marker_interfaces"
 
-    class CustomExportContent(ExportContent)
+    class CustomExportContent(ExportContent):
 
         def global_dict_hook(self, item, obj):
             item = self.export_marker_interfaces(item, obj)
@@ -999,7 +1020,7 @@ You then need a new step in the migration to move the deferred values from the a
 
 This additional view obviously needs to be registered:
 
-.. code-block:: xml
+.. code-block::
 
     <browser:page
         name="import_deferred"
@@ -1234,15 +1255,15 @@ You can export/import Zope user like this.
             return counter
 
 
-Export/Import properties, registry-settings and installed addons
-----------------------------------------------------------------
+Export/Import properties, registry-settings and installed add-ons
+-----------------------------------------------------------------
 
 When you migrate multiple similar sites that are configured manually it can be useful to export and import configuration that was set by hand.
 
 Export/Import installed settings and add-ons
 ********************************************
 
-This custom export exports and imports some selected settings and addons from a Plone 4.3 site.
+This custom export exports and imports some selected settings and add-ons from a Plone 4.3 site.
 
 **Export:**
 
@@ -1261,7 +1282,7 @@ This custom export exports and imports some selected settings and addons from a 
         """
 
         def __call__(self, download_to_server=False):
-            self.title = "Export installed addons various settings"
+            self.title = "Export installed add-ons various settings"
             self.download_to_server = download_to_server
             if not self.request.form.get("form.submitted", False):
                 return self.index()
@@ -1301,7 +1322,7 @@ This custom export exports and imports some selected settings and addons from a 
 
 **Import:**
 
-The import installs the addons and load the settings in the registry.
+The import installs the add-ons and load the settings in the registry.
 Since Plone 5 ``portal_properties`` is no longer used.
 
 .. code-block:: python
@@ -1757,7 +1778,7 @@ See https://6.docs.plone.org/backend/upgrading/version-specific-migration/migrat
             if not installer.is_product_installed("contentimport"):
                 installer.install_product("contentimport")
 
-            # install required addons
+            # install required add-ons
             for addon in DEFAULT_ADDONS:
                 if not installer.is_product_installed(addon):
                     installer.install_product(addon)
@@ -1894,8 +1915,9 @@ Versions older than Plone 4 do not support ``plone.restapi`` which is required t
 
 To migrate Plone 1, 2 and 3 to Plone 6 you can use ``collective.jsonify`` for the export and ``collective.exportimport`` for the import.
 
-Export
-******
+
+Export with collective.jsonify
+******************************
 
 Use https://github.com/collective/collective.jsonify to export content.
 
@@ -1905,7 +1927,7 @@ See https://github.com/collective/collective.jsonify/blob/master/docs/install.rs
 To work better with ``collective.exportimport`` you could extend the exported data using the feature ``additional_wrappers``.
 Add info on the parent of an item to make it easier for ``collective.exportimport`` to import the data.
 
-Here is a full example for `json_methods.py` which should be in `BUILDOUT_ROOT/parts/instance/Extensions/`
+Here is a full example for ``json_methods.py`` which should be in ``BUILDOUT_ROOT/parts/instance/Extensions/``
 
 .. code-block:: python
 
@@ -1993,8 +2015,8 @@ To use these create three "External Method" in the ZMI root at the Zope root to 
 Then you can pass the extender to the export using a query-string: http://localhost:8080/Plone/export_content?additional_wrappers=extend_item
 
 
-Import
-******
+Import with collective.jsonify
+******************************
 
 Two issues need to be dealt with to allow ``collective.exportimport`` to import the data generated by ``collective.jsonify``.
 
@@ -2146,82 +2168,12 @@ This ``global_obj_hook`` below stores that data in a annotation:
             annotations[DEFERRED_KEY] = data
 
 
-Written by
-==========
-
-.. image:: ./docs/starzel.png
-    :target: https://www.starzel.de
-    :alt: Starzel.de
-
-
 Translations
 ============
 
 This product has been translated into
 
 - Spanish
-
-
-Installation
-============
-
-Install collective.exportimport by adding it to your buildout::
-
-    [buildout]
-
-    ...
-
-    eggs =
-        collective.exportimport
-
-
-and then running ``bin/buildout``
-
-You don't need to activate the add-on in the Site Setup Add-ons control panel to be able to use the forms ``@@export_content`` and ``@@import_content`` in your site.
-
-You do need to add it to your buildout configuration and run buildout to make these features available at all. See https://docs.plone.org/manage/installing/installing_addons.html for details.
-
-Installing in Plone 4
----------------------
-
-``collective.exportimport`` depends on ``plone.restapi``. For Plone 4, you need to pin ``plone.restapi`` to 7.x . When installing ``plone.restapi`` version 7.x.x in Plone 4 you may need to add the following version pins to your buildout::
-
-    [versions]
-    PyJWT = 1.7.1
-
-    six = 1.11.0
-    attrs = 21.2.0
-    plone.rest = 1.6.2
-    plone.schema = 1.3.0
-    # Last pyrsistent version that is python 2 compatible:
-    pyrsistent = 0.15.7
-
-    # Required by:
-    # jsonschema==3.2.0
-    functools32 = 3.2.3.post2
-
-    # Required by:
-    # plone.schema==1.3.0
-    jsonschema = 3.2.0
-
-    # Required by:
-    # importlib-metadata==1.3.0
-    pathlib2 = 2.3.5
-
-    # Required by:
-    # pathlib2==2.3.5
-    scandir = 1.10.0
-
-    # plone.app.contenttypes > 1.0
-    plone.app.contenttypes = 1.1.9
-
-    importlib-metadata = 2.1.3
-    zipp = 1.2.0
-    configparser = 4.0.2
-    contextlib2 = 0.6.0.post1
-
-
-These versions are taken from the ``plone.restapi`` 7.x README: https://pypi.org/project/plone.restapi/7.8.1/
 
 
 Contribute
@@ -2241,3 +2193,11 @@ License
 -------
 
 The project is licensed under the GPLv2.
+
+
+Written by
+==========
+
+.. image:: ./docs/starzel.png
+    :target: https://www.starzel.de
+    :alt: Starzel.de
