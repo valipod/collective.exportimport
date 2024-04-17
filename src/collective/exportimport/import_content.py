@@ -316,7 +316,9 @@ class ImportContent(BrowserView):
             directory = cfg.clienthome
         base_path = os.path.join(directory, config.TREE_DIRECTORY)
         if os.path.isdir(base_path):
-            return [os.path.join(base_path, d, "content") for d in os.listdir(base_path)]
+            # There is a doubling of the `content` folder, removing it from here
+            # return [os.path.join(base_path, d, "content") for d in os.listdir(base_path)]
+            return [os.path.join(base_path, d) for d in os.listdir(base_path)]
         return []
 
     def do_import(self, data):
