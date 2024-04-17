@@ -9,10 +9,13 @@ from plone.app.textfield.interfaces import IRichText
 from plone.dexterity.interfaces import IDexterityContent
 from plone.namedfile.interfaces import INamedFileField, INamedBlobFileField
 from plone.namedfile.interfaces import INamedImageField
+from plone.restapi.behaviors import IBlocks
 from plone.restapi.interfaces import IFieldSerializer
 from plone.restapi.interfaces import IJsonCompatible
+from plone.restapi.serializer.blocks import BlocksJSONFieldSerializer
 from plone.restapi.serializer.converters import json_compatible
 from plone.restapi.serializer.dxfields import DefaultFieldSerializer
+from plone.schema import IJSONField
 from Products.CMFCore.utils import getToolByName
 from zope.component import adapter
 from zope.component import getUtility
@@ -160,7 +163,13 @@ class CollectionFieldSerializer(DefaultFieldSerializer):
                 except LookupError:
                     # TODO: handle defaultFactory?
                     if v not in [self.field.default, self.field.missing_value]:
-                        logger.info("Term lookup error: %r not in vocabulary %r for field %r of %r", v, value_type.vocabularyName, self.field.__name__, self.context)
+                        logger.info(
+                            "Term lookup error: %r not in vocabulary %r for field %r of %r",
+                            v,
+                            value_type.vocabularyName,
+                            self.field.__name__,
+                            self.context,
+                        )
         return json_compatible(value)
 
 
@@ -183,7 +192,13 @@ class ChoiceFieldSerializer(DefaultFieldSerializer):
             except LookupError:
                 # TODO: handle defaultFactory?
                 if value not in [self.field.default, self.field.missing_value]:
-                    logger.info("Term lookup error: %r not in vocabulary %r for field %r of %r", value, self.field.vocabularyName, self.field.__name__, self.context)
+                    logger.info(
+                        "Term lookup error: %r not in vocabulary %r for field %r of %r",
+                        value,
+                        self.field.vocabularyName,
+                        self.field.__name__,
+                        self.context,
+                    )
         return json_compatible(value)
 
 
@@ -415,28 +430,43 @@ if HAS_AT and HAS_PAC:
             registry = reader.parseRegistry()
 
             # Inject new selection-operators that were added in Plone 5
-            selection = registry["plone"]["app"]["querystring"]["operation"]["selection"]
+            selection = registry["plone"]["app"]["querystring"]["operation"][
+                "selection"
+            ]
             new_operators = ["all", "any", "none"]
-            for operator  in new_operators:
+            for operator in new_operators:
                 if operator not in selection:
                     # just a dummy method to pass validation
                     selection[operator] = {"operation": "collective.exportimport"}
 
             # Inject any operator for some fields
             any_operator = "plone.app.querystring.operation.selection.any"
-            fields_with_any_operator = ['Creator', 'Subject', 'portal_type', 'review_state']
+            fields_with_any_operator = [
+                "Creator",
+                "Subject",
+                "portal_type",
+                "review_state",
+            ]
             for field in fields_with_any_operator:
-                operations = registry["plone"]["app"]["querystring"]["field"][field]["operations"]
+                operations = registry["plone"]["app"]["querystring"]["field"][field][
+                    "operations"
+                ]
                 if any_operator not in operations:
-                    registry["plone"]["app"]["querystring"]["field"][field]["operations"].append(any_operator)
+                    registry["plone"]["app"]["querystring"]["field"][field][
+                        "operations"
+                    ].append(any_operator)
 
             # Inject all operator for Subject
-            all_operator= "plone.app.querystring.operation.selection.all"
+            all_operator = "plone.app.querystring.operation.selection.all"
             fields_with_any_operator = ["Subject"]
             for field in fields_with_any_operator:
-                operations = registry["plone"]["app"]["querystring"]["field"][field]["operations"]
+                operations = registry["plone"]["app"]["querystring"]["field"][field][
+                    "operations"
+                ]
                 if all_operator not in operations:
-                    registry["plone"]["app"]["querystring"]["field"][field]["operations"].append(all_operator)
+                    registry["plone"]["app"]["querystring"]["field"][field][
+                        "operations"
+                    ].append(all_operator)
 
             # 3. Migrate criteria using the converters from p.a.contenttypes
             criteria = self.context.listCriteria()
@@ -457,7 +487,11 @@ if HAS_AT and HAS_PAC:
                 try:
                     converter(query, criterion, registry)
                 except Exception:
-                    logger.info(u"Error converting criterion %s", criterion.__dict__, exc_info=True)
+                    logger.info(
+                        u"Error converting criterion %s",
+                        criterion.__dict__,
+                        exc_info=True,
+                    )
                     pass
 
                 # Try to manually convert when no criterion was added
@@ -467,7 +501,10 @@ if HAS_AT and HAS_PAC:
                     if fixed:
                         query.append(fixed)
                     else:
-                        logger.info(u"Check maybe broken collection %s", self.context.absolute_url())
+                        logger.info(
+                            u"Check maybe broken collection %s",
+                            self.context.absolute_url(),
+                        )
 
             # 4. So some manual fixes in the migrated query
             indexes_to_fix = [
@@ -478,10 +515,8 @@ if HAS_AT and HAS_PAC:
             ]
             operator_mapping = {
                 # old -> new
-                u"plone.app.querystring.operation.selection.is":
-                    u"plone.app.querystring.operation.selection.any",
-                u"plone.app.querystring.operation.string.is":
-                    u"plone.app.querystring.operation.selection.any",
+                u"plone.app.querystring.operation.selection.is": u"plone.app.querystring.operation.selection.any",
+                u"plone.app.querystring.operation.string.is": u"plone.app.querystring.operation.selection.any",
             }
             fixed_query = []
             for crit in query:
@@ -550,10 +585,10 @@ def get_dx_blob_path(obj):
 @adapter(INamedFileField, IDexterityContent, IPathBlobsMarker)
 @implementer(IFieldSerializer)
 class FileFieldSerializerZODBData(FileFieldSerializerWithBlobs):
-    """ Although the marker is IPathBlobsMarker, this being a plain NamedFile
+    """Although the marker is IPathBlobsMarker, this being a plain NamedFile
     object, its data is in the ZODB, thus this still needs to be
     base64 encoded into the JSON file
-    So we just subclass from the above FileFieldSerializerWithBlobs """
+    So we just subclass from the above FileFieldSerializerWithBlobs"""
 
 
 @adapter(INamedBlobFileField, IDexterityContent, IPathBlobsMarker)
@@ -605,6 +640,14 @@ class ImageFieldSerializerWithBlobPaths(DefaultFieldSerializer):
             "blob_path": blobfilepath,
         }
         return json_compatible(result)
+
+
+@adapter(IJSONField, IBlocks, IMigrationMarker)
+@implementer(IFieldSerializer)
+class ExportingBlocksJSONFieldSerializer(DefaultFieldSerializer):
+    """We skip the subscribers that serialize the blocks for the frontend.
+    We only need the raw data.
+    """
 
 
 if six.PY2:

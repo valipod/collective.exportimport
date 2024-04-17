@@ -300,8 +300,14 @@ class ExportMembers(BaseExport):
 
     def _getUserData(self, userId):
         member = self.pms.getMemberById(userId)
-        groups = member.getGroups()
-        groups = [i for i in groups if i not in self.AUTO_GROUPS]
+        groups = []
+        group_ids = [i for i in member.getGroups() if i not in self.AUTO_GROUPS]
+        # Drop groups in which the user is a transitive member
+        for group_id in group_ids:
+            group = api.group.get(group_id)
+            plone_group = group.getGroup()
+            if userId in plone_group.getMemberIds():
+                groups.append(group_id)
         group_roles = []
         for gid in groups:
             group_roles.extend(self.group_roles.get(gid, []))
@@ -638,7 +644,9 @@ class ExportPortlets(BaseExport):
     def all_portlets(self):
         self.results = []
         portal = api.portal.get()
-        portal.ZopeFindAndApply(self.context, search_sub=True, apply_func=self.get_portlets)
+        portal.ZopeFindAndApply(
+            self.context, search_sub=True, apply_func=self.get_portlets
+        )
         self.get_root_portlets()
         return self.results
 
@@ -663,7 +671,7 @@ class ExportPortlets(BaseExport):
             obj_results["uuid"] = uid
             self.results.append(obj_results)
         return
-    
+
     def get_root_portlets(self):
         site = api.portal.get()
         self._get_portlets(site, PORTAL_PLACEHOLDER)
@@ -674,6 +682,7 @@ class ExportPortlets(BaseExport):
 
     def portlets_blacklist_hook(self, blacklist):
         return blacklist
+
 
 def export_local_portlets(obj):
     """Serialize portlets for one content object

@@ -2,7 +2,21 @@ Changelog
 =========
 
 
-1.11 (unreleased)
+1.13 (unreleased)
+-----------------
+
+- Add and run a black version, that is compatible with Python 2.
+  [pgrunewald]
+
+
+1.12 (2024-03-08)
+-----------------
+
+- Fix migrating blocks to make Volto sites portable and support plone.distribution.
+  [pbauer, tlotze]
+
+
+1.11 (2024-02-28)
 -----------------
 
 - Fix ``AtributeError: 'NamedFile' object has no attribute '_blob'`` when using setting
@@ -42,6 +56,10 @@ Changelog
 - Modifies import_content and export_content templates to include boostrap classes and change checkboxes to switches.
   [rber474]
  
+- In export_members ignore transitive membership of groups (#240)
+  [pbauer]
+
+
 1.10 (2023-10-11)
 -----------------
 
