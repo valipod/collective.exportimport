@@ -83,8 +83,10 @@ def filesystem_walker(path=None):
     assert root.is_dir()
 
     # first import json-files directly in the path
-    json_files = [i for i in root.glob("*.json") if i.stem.isdecimal()]
-    for json_file in sorted(json_files, key=lambda i: int(i.stem)):
+    #json_files = [i for i in root.glob("*.json") if i.stem.isdecimal()]
+    #for json_file in sorted(json_files, key=lambda i: int(i.stem)):
+    json_files = [i for i in root.glob("*.json")]
+    for json_file in sorted(json_files, key=lambda i: int(i.stem.split('_')[0])):
         logger.debug("Importing %s", json_file)
         item = json.loads(json_file.read_text())
         item["json_file"] = str(json_file)
@@ -92,10 +94,14 @@ def filesystem_walker(path=None):
             yield item
 
     # then import json-files of any containing folders
-    folders = [i for i in root.iterdir() if i.is_dir() and i.name.isdecimal()]
-    for folder in sorted(folders, key=lambda i: int(i.name)):
-        json_files = [i for i in folder.glob("*.json") if i.stem.isdecimal()]
-        for json_file in sorted(json_files, key=lambda i: int(i.stem)):
+    #folders = [i for i in root.iterdir() if i.is_dir() and i.name.isdecimal()]
+    #for folder in sorted(folders, key=lambda i: int(i.name)):
+    #    json_files = [i for i in folder.glob("*.json") if i.stem.isdecimal()]
+    #    for json_file in sorted(json_files, key=lambda i: int(i.stem)):
+    folders = [i for i in root.iterdir() if i.is_dir()]
+    for folder in sorted(folders, key=lambda i: int(i.name.split('_')[0])):
+        json_files = [i for i in folder.glob("*.json")]
+        for json_file in sorted(json_files, key=lambda i: int(i.stem.split('_')[0])):
             logger.debug("Importing %s", json_file)
             item = json.loads(json_file.read_text())
             item["json_file"] = str(json_file)
@@ -537,9 +543,9 @@ class ImportContent(BrowserView):
             creation_date = DateTime(dateutil.parser.parse(created))
             new.creation_date = creation_date
             new.aq_base.creation_date_migrated = creation_date
-        logger.info(
-            "Created item #{}: {} {}".format(index, item["@type"], new.absolute_url())
-        )
+        #logger.info(
+        #    "Created item #{}: {} {}".format(index, item["@type"], new.absolute_url())
+        #)
         return new
 
     def import_versions(self, container, item):
@@ -650,11 +656,11 @@ class ImportContent(BrowserView):
             new.aq_base.creation_date_migrated = creation_date
 
         self.save_revision(new, item)
-        logger.info(
-            "Created item: {} {} with {} old versions".format(
-                item["@type"], new.absolute_url(), len(item["exportimport.versions"])
-            )
-        )
+        #logger.info(
+        #    "Created item: {} {} with {} old versions".format(
+        #        item["@type"], new.absolute_url(), len(item["exportimport.versions"])
+        #    )
+        #)
 
         if policy:
             repo_tool.addPolicyForContentType(item["@type"], policy)
