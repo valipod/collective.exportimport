@@ -576,6 +576,10 @@ class ExportDefaultPages(BaseExport):
         else:
             # 2. Check attribute 'default_page'
             default_page = getattr(aq_base(obj), "default_page", [])
+        if not default_page and "index.html" in obj:
+            default_page = "index.html"
+        if not default_page and "index.htm" in obj:
+            default_page = "index.htm"
 
         if default_page and default_page in obj:
             default_page_obj = obj.get(default_page)

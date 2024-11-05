@@ -165,13 +165,14 @@ class CollectionFieldSerializer(DefaultFieldSerializer):
                 except LookupError:
                     # TODO: handle defaultFactory?
                     if v not in [self.field.default, self.field.missing_value]:
-                        logger.info(
-                            "Term lookup error: %r not in vocabulary %r for field %r of %r",
-                            v,
-                            value_type.vocabularyName,
-                            self.field.__name__,
-                            self.context,
-                        )
+                        pass
+                        #logger.info(
+                        #    "Term lookup error: %r not in vocabulary %r for field %r of %r",
+                        #    v,
+                        #    value_type.vocabularyName,
+                        #    self.field.__name__,
+                        #    self.context,
+                        #)
         return json_compatible(value)
 
 
@@ -194,13 +195,14 @@ class ChoiceFieldSerializer(DefaultFieldSerializer):
             except LookupError:
                 # TODO: handle defaultFactory?
                 if value not in [self.field.default, self.field.missing_value]:
-                    logger.info(
-                        "Term lookup error: %r not in vocabulary %r for field %r of %r",
-                        value,
-                        self.field.vocabularyName,
-                        self.field.__name__,
-                        self.context,
-                    )
+                    pass
+                    #logger.info(
+                    #    "Term lookup error: %r not in vocabulary %r for field %r of %r",
+                    #    value,
+                    #    self.field.vocabularyName,
+                    #    self.field.__name__,
+                    #    self.context,
+                    #)
         return json_compatible(value)
 
 
