@@ -2,14 +2,43 @@ Changelog
 =========
 
 
-1.13 (unreleased)
+1.14 (unreleased)
 -----------------
+
+- Nothing changed yet.
+
+
+1.13 (2025-01-08)
+-----------------
+
+- Fix styling of ``export_content`` page in Plone 6.1.
+  The checkbox inputs were displayed in block instead of inline with the label.
+  [maurits]
+
+- Make it possible to switch off changing data for migration.
+  Previous, you could uncheck this checkbox in ``export_content``, but this was ignored.
+  This fixes `issue 247 <https://github.com/collective/collective.exportimport/issues/247>`_.
+  [maurits]
+
+- Load code for exporting/importing comments conditionally.
+  ``plone.app.discussion`` is optional since Plone 6.1.
+  [maurits]
 
 - Add and run a black version, that is compatible with Python 2.
   [pgrunewald]
+
+- Fix ``AtributeError: 'NamedImage' object has no attribute '_blob'`` similar to #236.
+  [petschki]
+
 - Make zcml conditions more specific so that migration aliases don't trigger them
   [reinhardt]
 
+- Fix several ``UnboundLocalError`` exceptions when doing automated import
+  with ``return_json=True``
+  [petschki]
+
+- Suppress events when importing ordering to not trigger ContainerModifiedEvent.
+  [pbauer]
 
 1.12 (2024-03-08)
 -----------------

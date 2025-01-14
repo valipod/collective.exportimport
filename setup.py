@@ -17,7 +17,6 @@ long_description = "\n\n".join(
 
 install_requires = [
     "hurry.filesize",
-    "ijson",
     "setuptools",
     "six",
 ]
@@ -26,11 +25,13 @@ if sys.version_info[0] < 3:
     install_requires.append("attrs < 22")
     install_requires.append("backports.functools-lru-cache < 2")
     install_requires.append("beautifulsoup4 < 4.10")
+    install_requires.append("ijson < 3.3.0")
     # plone.restapi depends on plone.schema, which depends on jsonschema,
     # which has a Py3-only release since September 2021.
     install_requires.append("jsonschema < 4")
     install_requires.append("pathlib2")
     install_requires.append("plone.api >= 1.8.4, < 2")
+    install_requires.append("ijson < 3.3.0")
     # There is a py2-imcompatibility in plone.rest 3.0.1
     install_requires.append("plone.rest < 3.0.1")
     install_requires.append("plone.restapi < 8")
@@ -39,13 +40,14 @@ if sys.version_info[0] < 3:
     install_requires.append("pyrsistent < 0.16.0")
 else:
     install_requires.append("beautifulsoup4")
+    install_requires.append("ijson")
     install_requires.append("plone.api >= 1.8.4")
     install_requires.append("plone.restapi")
 
 
 setup(
     name="collective.exportimport",
-    version="1.13.dev0",
+    version="1.14.dev0",
     description="An add-on for Plone to Export and import content, members, relations, translations and localroles.",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
