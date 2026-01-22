@@ -2,10 +2,31 @@ Changelog
 =========
 
 
-1.14 (unreleased)
+1.16 (unreleased)
 -----------------
 
-- Nothing changed yet.
+- Skip setting a default page if the default is already set to the same value. 
+  [mamico]
+- Fixed data extraction of Archetypes ATFilefields to concatenate all `Pdata` chunks, when the FileField data was still stored in Filestorage and not not migrated to use blobstorage (using plone.app.blobs).
+  [@jnptk]
+- Bugfix to prevent clearing existing relations from catalog when migrating into sites with existing content [ThibautBorn]
+
+1.15 (2025-07-15)
+-----------------
+
+- Fix collections export.
+  [gotcha]
+
+1.14 (2025-04-12)
+-----------------
+
+- Fix when re-importing translations. @petschki
+
+- Fix issue in ``export_relations`` on a multilanguage site. @petschki
+
+- Fix ``AttributeError: __contains__`` when checking for default-page on no longer folderish object.
+  A custom migration may have turned a former container into an item.
+  [maurits]
 
 
 1.13 (2025-01-08)

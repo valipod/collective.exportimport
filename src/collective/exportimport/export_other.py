@@ -196,10 +196,12 @@ class ExportRelations(BaseExport):
                         logger.exception("Cannot export relation %s, skipping", rel)
                         continue
                     if rel_from_path_and_rel_to_path:
-                        from_brain = portal_catalog(
-                            path=dict(query=rel.from_path, depth=0)
+                        from_brain = portal_catalog.unrestrictedSearchResults(
+                            path=dict(query=rel.from_path, depth=0),
                         )
-                        to_brain = portal_catalog(path=dict(query=rel.to_path, depth=0))
+                        to_brain = portal_catalog.unrestrictedSearchResults(
+                            path=dict(query=rel.to_path, depth=0),
+                        )
                         if len(from_brain) > 0 and len(to_brain) > 0:
                             item = {
                                 "from_uuid": from_brain[0].UID,

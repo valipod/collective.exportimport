@@ -59,6 +59,16 @@ else:
     HAS_DX = True
 
 try:
+    pkg_resources.get_distribution("plone.app.contenttypes")
+except pkg_resources.DistributionNotFound:
+    ICollection = None
+    HAS_PAC = False
+else:
+    from plone.app.contenttypes.interfaces import ICollection
+
+    HAS_PAC = True
+
+try:
     pkg_resources.get_distribution("z3c.relationfield")
 except pkg_resources.DistributionNotFound:
     IRelationChoice = None
@@ -385,6 +395,8 @@ class ExportContent(BrowserView):
                 if IPloneSiteRoot.providedBy(obj):
                     item = serializer()
                 elif getattr(aq_base(obj), "isPrincipiaFolderish", False):
+                    item = serializer(include_items=False)
+                elif HAS_PAC and ICollection.providedBy(obj):
                     item = serializer(include_items=False)
                 else:
                     item = serializer()

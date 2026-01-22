@@ -175,6 +175,8 @@ if HAS_PAM:  # noqa: C901
             ITranslationManager(obj).register_translation(language, translation)
         except TypeError as e:
             logger.info(u"Item is not translatable: {}".format(e))
+        except KeyError as e:
+            logger.info(u"Item already translated: {}".format(e))
 
 else:
 
@@ -357,12 +359,16 @@ class ImportRelations(BrowserView):
             all_fixed_relations, key=itemgetter("from_uuid", "from_attribute")
         )
         if HAS_RELAPI:
+            relapi.store_relations()
             relapi.purge_relations()
             relapi.cleanup_intids()
+            relapi.restore_relations()
             relapi.restore_relations(all_relations=all_fixed_relations)
         elif HAS_PLONE6:
+            relationhelper.store_relations()
             relationhelper.purge_relations()
             relationhelper.cleanup_intids()
+            relationhelper.restore_relations()
             relationhelper.restore_relations(all_relations=all_fixed_relations)
 
     def get_from_attribute(self, rel):
@@ -550,7 +556,17 @@ class ImportDefaultPages(BrowserView):
             else:
                 # fallback for old export versions
                 default_page = item["default_page"]
-            if default_page not in obj:
+            try:
+                is_child = default_page in obj
+            except AttributeError:
+                # If the  object used to be a Folder and a custom migration turned it
+                # into something non-folderish, you get: AttributeError: __contains__
+                logger.info(
+                    u"Cannot set default page because object is not folderish: %s",
+                    obj.absolute_url(),
+                )
+                continue
+            if not is_child:
                 logger.info(
                     u"Default page not a child: %s not in %s",
                     default_page,
@@ -563,8 +579,12 @@ class ImportDefaultPages(BrowserView):
                 continue
 
             if six.PY2:
+                if obj.getDefaultPage() == default_page.encode("utf-8"):
+                    continue
                 obj.setDefaultPage(default_page.encode("utf-8"))
             else:
+                if obj.getDefaultPage() == default_page:
+                    continue
                 obj.setDefaultPage(default_page)
             logger.debug(
                 u"Set %s as default page for %s", default_page, obj.absolute_url()

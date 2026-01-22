@@ -21,13 +21,13 @@
 collective.exportimport
 =======================
 
-Export and import content, members, relations, translations, localroles and much more.
+Export and import content, members, relations, translations, localroles, and much more.
 
 Export and import all kinds of data from and to Plone sites using a intermediate json-format.
 The main use-case is migrations since it enables you to for example migrate from Plone 4 with Archetypes and Python 2 to Plone 6 with Dexterity and Python 3 in one step.
 Most features use `plone.restapi` to serialize and deserialize data.
 
-See also the training on migrating with ``exportimport``: https://training.plone.org/migrations/exportimport.html
+See also the training on migrating with ``exportimport``: https://2024.training.plone.org/migrations/exportimport.html
 
 .. contents:: Contents
     :local:
@@ -433,7 +433,8 @@ Run all exports and save all data in ``var/instance/``:
             export_content(
                 portal_type=["Folder", "Document", "News Item", "File", "Image"],  # only export these
                 include_blobs=2,  # Export files and images as blob paths
-                download_to_server=True)
+                download_to_server=True,
+                migration=True)
 
             other_exports = [
                 "export_relations",
@@ -927,6 +928,7 @@ It is put in a key, that the normal import will ignore and set using ``setattr()
             # import simplesetter data before the rest
             for fieldname, value in item.get("exportimport.simplesetter", {}).items():
                 setattr(obj, fieldname, value)
+            return obj, item
 
 .. note::
 
